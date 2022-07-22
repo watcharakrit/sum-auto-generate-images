@@ -73,7 +73,7 @@ const InputImageFileToCanvas: React.FC<InputImageFileToCanvasProps> = ({ imageFi
   return (
     <ImageContainer>
       <canvas style={{ display: 'none' }} ref={canvasRef} />
-      <img alt={imgNameToDownload} src={renderedImage} />
+      {renderedImage && <img alt={imgNameToDownload} src={renderedImage} />}
     </ImageContainer>
   )
 
