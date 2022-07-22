@@ -17,7 +17,11 @@ function App() {
           <ScrollPage>
             <Container>
               <GlobalStyle />
-              <Title>SUM Auto Generate Images</Title>
+              <Title style={{ marginBottom: '-10px' }}>SUM Auto Generate Images</Title>
+              <p>
+                The image can define the color label by add prefix name follow options.
+                <br />( "red_", "blue", "yellow_", "black_" and empty is default color "white" )
+              </p>
               <input type="file" accept="image/png, image/gif, image/jpeg" multiple onChange={handleFileInput} />
 
               <PreviewImages>
@@ -88,7 +92,7 @@ const Container = styled.div`
   margin: 0 auto;
 `
 
-const Title = styled.div`
+const Title = styled.h1`
   margin-top: 80px;
   margin-bottom: 30px;
 `

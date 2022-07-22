@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 enum CornerEnum {
@@ -17,8 +17,14 @@ interface InputImageFileToCanvasProps {
   imageFile: File
 }
 
+enum LayoutTypeEnum {
+  vertical = 'vertical',
+  herizontal = 'herizontal',
+}
+
 const InputImageFileToCanvas: React.FC<InputImageFileToCanvasProps> = ({ imageFile }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [renderedImage, setRenderedImage] = useState('')
 
   useEffect(() => {
     var reader = new FileReader()
@@ -28,21 +34,28 @@ const InputImageFileToCanvas: React.FC<InputImageFileToCanvasProps> = ({ imageFi
         if (canvasRef.current) {
           const c = canvasRef.current
           const isVertical = img.height >= img.width
+          const imgDimension = getDimensionImageByLayoutType(
+            isVertical ? LayoutTypeEnum.vertical : LayoutTypeEnum.herizontal,
+            img.width,
+            img.height
+          )
           const offsetLeftBlackSpace = isVertical ? 80 : 0
-          c.width = img.width + offsetLeftBlackSpace
-          c.height = img.height
+          c.width = imgDimension.areaWidth
+          c.height = imgDimension.areaHeight
           const ctx = c.getContext('2d')
           if (ctx) {
             ctx.fillStyle = 'black'
             ctx.fillRect(0, 0, offsetLeftBlackSpace, img.height)
-            ctx.drawImage(img, offsetLeftBlackSpace, 0)
+            ctx.drawImage(img, offsetLeftBlackSpace, 0, imgDimension.imgWidth, imgDimension.imgHeight)
             ctx.globalCompositeOperation = 'soft-light'
             ctx.globalAlpha = 0.5
-            ctx.drawImage(img, offsetLeftBlackSpace, 0)
+            ctx.drawImage(img, offsetLeftBlackSpace, 0, imgDimension.imgWidth, imgDimension.imgHeight)
             ctx.globalCompositeOperation = 'source-over'
             ctx.globalAlpha = 1
             const color = getColorFromImageName(imageFile.name)
-            ctxAddSumLogoByColor(ctx, color, img.width, img.height)
+            ctxAddSumLogoByColor(ctx, color, imgDimension.areaWidth, imgDimension.areaHeight, () => {
+              setRenderedImage(c.toDataURL('image/png'))
+            })
           }
         }
       }
@@ -57,9 +70,31 @@ const InputImageFileToCanvas: React.FC<InputImageFileToCanvasProps> = ({ imageFi
 
   return (
     <ImageContainer>
-      <canvas ref={canvasRef} />
+      <canvas style={{ display: 'none' }} ref={canvasRef} />
+      <img alt="" src={renderedImage} />
     </ImageContainer>
   )
+
+  function getDimensionImageByLayoutType(
+    layoutType: LayoutTypeEnum,
+    imgWidth: number,
+    imgHeight: number
+  ): { areaWidth: number; areaHeight: number; imgWidth: number; imgHeight: number } {
+    let w: number, h: number, imgRatio: number
+    switch (layoutType) {
+      case LayoutTypeEnum.vertical:
+        w = 720
+        h = 900
+        imgRatio = imgWidth / imgHeight
+        break
+      case LayoutTypeEnum.herizontal:
+      default:
+        w = 1280
+        h = 720
+        imgRatio = imgWidth / imgHeight
+    }
+    return { areaWidth: w, areaHeight: h, imgWidth: h * imgRatio, imgHeight: h }
+  }
 
   function getColorFromImageName(imageName: string): string {
     const strArray = imageName.split('_')
@@ -91,7 +126,13 @@ const InputImageFileToCanvas: React.FC<InputImageFileToCanvasProps> = ({ imageFi
     return { posX, posY }
   }
 
-  function ctxAddSumLogoByColor(ctx: CanvasRenderingContext2D, color: string, imgWidth: number, imgHeight: number) {
+  function ctxAddSumLogoByColor(
+    ctx: CanvasRenderingContext2D,
+    color: string,
+    imgWidth: number,
+    imgHeight: number,
+    onCompleted: () => void
+  ) {
     const labelWidth = 80
     const labelHeight = 80
 
@@ -118,8 +159,8 @@ const InputImageFileToCanvas: React.FC<InputImageFileToCanvasProps> = ({ imageFi
     const startImgY = posImg.posY
     const img = new Image()
     img.onload = function () {
-      console.log('img: ', img)
       ctx.drawImage(img, startImgX, startImgY, labelWidth, labelHeight)
+      onCompleted()
     }
     img.src = imgColor
   }
