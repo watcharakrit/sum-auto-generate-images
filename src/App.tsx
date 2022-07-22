@@ -17,6 +17,9 @@ function App() {
           <ScrollPage>
             <Container>
               <GlobalStyle />
+              <AppVersion>
+                <p>v{process.env.REACT_APP_VERSION}</p>
+              </AppVersion>
               <Title style={{ marginBottom: '-10px' }}>SUM Auto Generate Images</Title>
               <p>
                 The image can define the color label by add prefix name follow options.
@@ -98,3 +101,9 @@ const Title = styled.h1`
 `
 
 const PreviewImages = styled.div``
+
+const AppVersion = styled.div`
+  position: absolute;
+  top: 0;
+  right: 20px;
+`
