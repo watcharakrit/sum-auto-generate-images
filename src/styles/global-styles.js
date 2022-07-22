@@ -1,5 +1,4 @@
 import { css } from 'styled-components'
-import media from 'styles/media'
 
 export default css`
   * {
@@ -21,14 +20,11 @@ export default css`
   }
 
   html {
-    @media (${media.screenMdMin}) {
-      // width: 414px;
-      position: relative;
-      margin: 0 auto;
-      transform: translate3d(0, 0, 0);
-      background-color: rgba(0, 0, 0, 0.85);
-      overflow: hidden;
-    }
+    position: relative;
+    margin: 0 auto;
+    transform: translate3d(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.85);
+    overflow: hidden;
   }
 
   body {
@@ -50,10 +46,8 @@ export default css`
       }
     }
 
-    @media (${media.screenMdMin}) {
-      transform: translate3d(0, 0, 0);
-      height: 100% !important;
-    }
+    transform: translate3d(0, 0, 0);
+    height: 100% !important;
   }
 
   // Slick: Over Write styles

@@ -34,22 +34,35 @@ const InputImageFileToCanvas: React.FC<InputImageFileToCanvasProps> = ({ imageFi
         if (canvasRef.current) {
           const c = canvasRef.current
           const isVertical = img.height >= img.width
+          const offsetLeftBlackSpace = isVertical ? 80 : 0
           const imgDimension = getDimensionImageByLayoutType(
             isVertical ? LayoutTypeEnum.vertical : LayoutTypeEnum.herizontal,
             img.width,
-            img.height
+            img.height,
+            isVertical ? offsetLeftBlackSpace : 0
           )
-          const offsetLeftBlackSpace = isVertical ? 80 : 0
           c.width = imgDimension.areaWidth
           c.height = imgDimension.areaHeight
           const ctx = c.getContext('2d')
           if (ctx) {
             ctx.fillStyle = 'black'
             ctx.fillRect(0, 0, offsetLeftBlackSpace, img.height)
-            ctx.drawImage(img, offsetLeftBlackSpace, 0, imgDimension.imgWidth, imgDimension.imgHeight)
+            ctx.drawImage(
+              img,
+              offsetLeftBlackSpace,
+              isVertical ? getYAdjustmentToAlignCenterOfHeight(imgDimension.areaHeight, imgDimension.imgHeight) : 0,
+              imgDimension.imgWidth,
+              imgDimension.imgHeight
+            )
             ctx.globalCompositeOperation = 'soft-light'
             ctx.globalAlpha = 0.5
-            ctx.drawImage(img, offsetLeftBlackSpace, 0, imgDimension.imgWidth, imgDimension.imgHeight)
+            ctx.drawImage(
+              img,
+              offsetLeftBlackSpace,
+              isVertical ? getYAdjustmentToAlignCenterOfHeight(imgDimension.areaHeight, imgDimension.imgHeight) : 0,
+              imgDimension.imgWidth,
+              imgDimension.imgHeight
+            )
             ctx.globalCompositeOperation = 'source-over'
             ctx.globalAlpha = 1
             const color = getColorFromImageName(imageFile.name)
@@ -77,25 +90,30 @@ const InputImageFileToCanvas: React.FC<InputImageFileToCanvasProps> = ({ imageFi
     </ImageContainer>
   )
 
+  function getYAdjustmentToAlignCenterOfHeight(areaHeight: number, imgHeight: number): number {
+    return (areaHeight - imgHeight) / 2
+  }
+
   function getDimensionImageByLayoutType(
     layoutType: LayoutTypeEnum,
     imgWidth: number,
-    imgHeight: number
+    imgHeight: number,
+    offsetWidth: number
   ): { areaWidth: number; areaHeight: number; imgWidth: number; imgHeight: number } {
     let w: number, h: number, imgRatio: number
     switch (layoutType) {
       case LayoutTypeEnum.vertical:
-        w = 720
+        w = 720 - offsetWidth
         h = 900
-        imgRatio = imgWidth / imgHeight
-        break
+        imgRatio = imgHeight / imgWidth
+        return { areaWidth: w, areaHeight: h, imgWidth: w, imgHeight: w * imgRatio }
       case LayoutTypeEnum.herizontal:
       default:
-        w = 1280
+        w = 1280 - offsetWidth
         h = 720
         imgRatio = imgWidth / imgHeight
+        return { areaWidth: w, areaHeight: h, imgWidth: h * imgRatio, imgHeight: h }
     }
-    return { areaWidth: w, areaHeight: h, imgWidth: h * imgRatio, imgHeight: h }
   }
 
   function getColorFromImageName(imageName: string): string {
