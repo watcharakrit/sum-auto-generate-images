@@ -68,10 +68,12 @@ const InputImageFileToCanvas: React.FC<InputImageFileToCanvasProps> = ({ imageFi
     }
   }, [imageFile])
 
+  const imgNameToDownload = imageFile.name.split('.')[0]
+
   return (
     <ImageContainer>
       <canvas style={{ display: 'none' }} ref={canvasRef} />
-      <img alt="" src={renderedImage} />
+      <img alt={imgNameToDownload} src={renderedImage} />
     </ImageContainer>
   )
 
