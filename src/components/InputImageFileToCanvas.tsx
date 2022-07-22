@@ -103,13 +103,13 @@ const InputImageFileToCanvas: React.FC<InputImageFileToCanvasProps> = ({ imageFi
     let w: number, h: number, imgRatio: number
     switch (layoutType) {
       case LayoutTypeEnum.vertical:
-        w = 720 - offsetWidth
+        w = 720
         h = 900
         imgRatio = imgHeight / imgWidth
-        return { areaWidth: w, areaHeight: h, imgWidth: w, imgHeight: w * imgRatio }
+        return { areaWidth: w, areaHeight: h, imgWidth: w - offsetWidth, imgHeight: (w - offsetWidth) * imgRatio }
       case LayoutTypeEnum.herizontal:
       default:
-        w = 1280 - offsetWidth
+        w = 1280
         h = 720
         imgRatio = imgWidth / imgHeight
         return { areaWidth: w, areaHeight: h, imgWidth: h * imgRatio, imgHeight: h }
