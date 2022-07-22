@@ -1,6 +1,6 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import logo from './logo.svg'
+import './App.css'
 import styled from 'styled-components'
 
 function App() {
@@ -11,22 +11,18 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
           Learn React
         </a>
-        <Box/>
+        <Box />
+        <Box />
         <Box />
       </header>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
 
 const Box = styled.div`
   width: 100px;
