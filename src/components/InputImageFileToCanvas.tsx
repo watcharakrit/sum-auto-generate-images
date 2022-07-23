@@ -46,7 +46,7 @@ const InputImageFileToCanvas: React.FC<InputImageFileToCanvasProps> = ({ imageFi
           const ctx = c.getContext('2d')
           if (ctx) {
             ctx.fillStyle = 'black'
-            ctx.fillRect(0, 0, offsetLeftBlackSpace, img.height)
+            ctx.fillRect(0, 0, offsetLeftBlackSpace, imgDimension.areaHeight)
             ctx.drawImage(
               img,
               offsetLeftBlackSpace,
@@ -106,7 +106,13 @@ const InputImageFileToCanvas: React.FC<InputImageFileToCanvasProps> = ({ imageFi
         w = 720
         h = 900
         imgRatio = imgHeight / imgWidth
-        return { areaWidth: w, areaHeight: h, imgWidth: w - offsetWidth, imgHeight: (w - offsetWidth) * imgRatio }
+        let newImgWidth = w - offsetWidth
+        let newImgHeight = newImgWidth * imgRatio
+        if (newImgHeight < h) {
+          newImgHeight = 900
+          newImgWidth = newImgHeight / imgRatio
+        }
+        return { areaWidth: w, areaHeight: h, imgWidth: newImgWidth, imgHeight: newImgHeight }
       case LayoutTypeEnum.herizontal:
       default:
         w = 1280
